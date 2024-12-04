@@ -2,6 +2,7 @@ import { IWebinarRepository } from '../ports/webinar-repository.interface';
 import { IIDGenerator } from '../ports/id-generator.interface';
 import { Webinar } from '../entities/webinar.entity';
 import { IDateGenerator } from '../ports/date-generator.interface';
+import { User } from '../entities/user.entity';
 
 export class OrganizeWebinar {
   constructor(
@@ -11,6 +12,7 @@ export class OrganizeWebinar {
   ) {}
 
   async execute(data: {
+    user: User;
     title: string;
     seats: number;
     startDate: Date;
@@ -20,6 +22,7 @@ export class OrganizeWebinar {
     const now = this.dateGenerator.now();
     const webinar = new Webinar({
       id,
+      organizerId: data.user.props.id,
       title: data.title,
       seats: data.seats,
       startDate: data.startDate,

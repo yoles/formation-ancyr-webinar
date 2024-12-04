@@ -3,12 +3,14 @@ import { FixedIdGenerator } from '../adapters/id-generator.stub';
 import { InMemoryWebinarRepository } from '../adapters/webinar-repository.in-memory';
 import { Webinar } from '../entities/webinar.entity';
 import { FixedDateGenerator } from '../adapters/date-generator.stub';
+import { User } from '../entities/user.entity';
 
 describe('Feature: organizing a webinar', () => {
   let idGenerator: FixedIdGenerator;
   let dateGenerator: FixedDateGenerator;
   let repository: InMemoryWebinarRepository;
   let useCase: OrganizeWebinar;
+  const johnDoe = new User({ id: "john-doe"});
 
   function expectWebinarToEqual(createdWebinar: Webinar) {
     expect(createdWebinar.props).toEqual({
@@ -17,6 +19,7 @@ describe('Feature: organizing a webinar', () => {
       seats: 100,
       startDate: new Date('2024-01-12T10:00:00Z'),
       endDate: new Date('2024-01-12T11:00:00Z'),
+      organizerId: "john-doe"
     });
   }
 
@@ -29,6 +32,7 @@ describe('Feature: organizing a webinar', () => {
 
   describe('Scenario: happy path', () => {
     const payload = {
+      user: johnDoe,
       title: 'My first webinar',
       seats: 100,
       startDate: new Date('2024-01-12T10:00:00Z'),
@@ -51,6 +55,7 @@ describe('Feature: organizing a webinar', () => {
 
   describe('Scenario: the webinar happen to soon', () => {
     const payload = {
+      user: johnDoe,
       title: 'My first webinar',
       seats: 100,
       startDate: new Date('2024-01-03T23:59:59Z'),
@@ -74,6 +79,7 @@ describe('Feature: organizing a webinar', () => {
 
   describe('Scenario: the webinar has too many seats', () => {
     const payload = {
+      user: johnDoe,
       title: 'My first webinar',
       seats: 1001,
       startDate: new Date('2024-01-12T10:00:00Z'),
@@ -97,6 +103,7 @@ describe('Feature: organizing a webinar', () => {
 
   describe('Scenario: the webinar has not enough seats', () => {
     const payload = {
+      user: johnDoe,
       title: 'My first webinar',
       seats: 0,
       startDate: new Date('2024-01-12T10:00:00Z'),

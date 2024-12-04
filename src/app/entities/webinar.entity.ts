@@ -1,6 +1,7 @@
 import { differenceInDays } from 'date-fns';
 
 type WebinarProps = {
+  organizerId: string;
   id: string;
   title: string;
   seats: number;
