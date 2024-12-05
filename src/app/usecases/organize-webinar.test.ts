@@ -10,7 +10,11 @@ describe('Feature: organizing a webinar', () => {
   let dateGenerator: FixedDateGenerator;
   let repository: InMemoryWebinarRepository;
   let useCase: OrganizeWebinar;
-  const johnDoe = new User({ id: "john-doe"});
+  const johnDoe = new User({
+    id: 'john-doe',
+    emailAddress: 'j.doe@example.fr',
+    password: 'azerty',
+  });
 
   function expectWebinarToEqual(createdWebinar: Webinar) {
     expect(createdWebinar.props).toEqual({
@@ -19,7 +23,7 @@ describe('Feature: organizing a webinar', () => {
       seats: 100,
       startDate: new Date('2024-01-12T10:00:00Z'),
       endDate: new Date('2024-01-12T11:00:00Z'),
-      organizerId: "john-doe"
+      organizerId: 'john-doe',
     });
   }
 
@@ -63,15 +67,14 @@ describe('Feature: organizing a webinar', () => {
     };
 
     it('Should throw an error', async () => {
-      await expect(
-        () => useCase.execute(payload)).rejects.toThrow(
-         "The webinar must happen 3 days from now"
+      await expect(() => useCase.execute(payload)).rejects.toThrow(
+        'The webinar must happen 3 days from now',
       );
     });
 
     it('Should not create a webinar', async () => {
       try {
-        await useCase.execute(payload)
+        await useCase.execute(payload);
       } catch (error) {}
       expect(repository.database.length).toEqual(0);
     });
@@ -87,15 +90,14 @@ describe('Feature: organizing a webinar', () => {
     };
 
     it('Should throw an error', async () => {
-      await expect(
-        () => useCase.execute(payload)).rejects.toThrow(
-        "The webinar must have a maximum of 1500 seats"
+      await expect(() => useCase.execute(payload)).rejects.toThrow(
+        'The webinar must have a maximum of 1500 seats',
       );
     });
 
     it('Should not create a webinar', async () => {
       try {
-        await useCase.execute(payload)
+        await useCase.execute(payload);
       } catch (error) {}
       expect(repository.database.length).toEqual(0);
     });
@@ -111,15 +113,14 @@ describe('Feature: organizing a webinar', () => {
     };
 
     it('Should throw an error', async () => {
-      await expect(
-        () => useCase.execute(payload)).rejects.toThrow(
-        "The webinar must have a minimum of 1 seat"
+      await expect(() => useCase.execute(payload)).rejects.toThrow(
+        'The webinar must have a minimum of 1 seat',
       );
     });
 
     it('Should not create a webinar', async () => {
       try {
-        await useCase.execute(payload)
+        await useCase.execute(payload);
       } catch (error) {}
       expect(repository.database.length).toEqual(0);
     });

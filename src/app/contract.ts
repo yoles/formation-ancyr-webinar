@@ -11,6 +11,6 @@ export namespace WebinarAPI {
     });
 
     export type Request = z.infer<typeof schema>;
-    export type Response = {id: string};
+    export type Response = { id: string };
   }
 }

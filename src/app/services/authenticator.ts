@@ -2,7 +2,7 @@ import { User } from '../entities/user.entity';
 import { IUserRepository } from '../ports/user-repository.interface';
 
 export interface IAuthenticator {
-  authenticate(token: string): Promise<User>
+  authenticate(token: string): Promise<User>;
 }
 
 export class Authenticator implements IAuthenticator {

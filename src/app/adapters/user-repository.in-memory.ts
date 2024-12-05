@@ -10,7 +10,7 @@ export class InMemoryUserRepository implements IUserRepository {
 
   async findByEmailAddress(emailAddress: string): Promise<User | null> {
     const user = this.database.find(
-      user => user.props.emailAddress === emailAddress
+      (user) => user.props.emailAddress === emailAddress,
     );
     return user ?? null;
   }

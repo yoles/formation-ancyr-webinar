@@ -15,9 +15,7 @@ export class Webinar {
   }
 
   isTooClose(now: Date): boolean {
-    const diff = differenceInDays(
-      this.props.startDate, now
-    )
+    const diff = differenceInDays(this.props.startDate, now);
     return diff < 3;
   }
 

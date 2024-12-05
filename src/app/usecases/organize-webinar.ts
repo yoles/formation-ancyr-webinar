@@ -35,7 +35,7 @@ export class OrganizeWebinar {
       throw new Error('The webinar must have a maximum of 1500 seats');
     }
     if (webinar.hasNoSeats()) {
-      throw new Error("The webinar must have a minimum of 1 seat");
+      throw new Error('The webinar must have a minimum of 1 seat');
     }
     await this.repository.create(webinar);
     return { id };
