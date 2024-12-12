@@ -10,22 +10,42 @@ import { InMemoryUserRepository } from './adapters/user-repository.in-memory';
 import { Authenticator } from './services/authenticator';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './guard/auth.guard';
+import { I_USER_REPOSITORY } from './ports/user-repository.interface';
+import { I_WEBINAR_REPOSITORY } from './ports/webinar-repository.interface';
+import { I_ID_GENERATOR } from './ports/id-generator.interface';
+import { I_DATE_GENERATOR } from './ports/date-generator.interface';
 
 @Module({
   imports: [],
   controllers: [AppController],
   providers: [
     AppService,
-    InMemoryWebinarRepository,
-    CurrentDateGenerator,
-    RandomIdGenerator,
-    InMemoryUserRepository,
+    {
+      provide: I_USER_REPOSITORY,
+      useFactory: () => {
+        return new InMemoryUserRepository()
+      }
+    },
+    {
+      provide: I_WEBINAR_REPOSITORY,
+      useFactory: () => {
+        return new InMemoryWebinarRepository()
+      }
+    },
+    {
+      provide: I_ID_GENERATOR,
+      useClass: RandomIdGenerator
+    },
+    {
+      provide: I_DATE_GENERATOR,
+      useClass: CurrentDateGenerator
+    },
     {
       provide: OrganizeWebinar,
       inject: [
-        InMemoryWebinarRepository,
-        RandomIdGenerator,
-        CurrentDateGenerator,
+        I_WEBINAR_REPOSITORY,
+        I_ID_GENERATOR,
+        I_DATE_GENERATOR
       ],
       useFactory: (repository, idGenerator, dateGenerator) => {
         return new OrganizeWebinar(repository, idGenerator, dateGenerator);
@@ -33,7 +53,7 @@ import { AuthGuard } from './guard/auth.guard';
     },
     {
       provide: Authenticator,
-      inject: [InMemoryUserRepository],
+      inject: [I_USER_REPOSITORY],
       useFactory: (repository) => {
         return new Authenticator(repository);
       },
