@@ -1,8 +1,8 @@
 import { IWebinarRepository } from '../ports/webinar-repository.interface';
-import { IIDGenerator } from '../ports/id-generator.interface';
+import { IIDGenerator } from '../../core/ports/id-generator.interface';
 import { Webinar } from '../entities/webinar.entity';
-import { IDateGenerator } from '../ports/date-generator.interface';
-import { User } from '../entities/user.entity';
+import { IDateGenerator } from '../../core/ports/date-generator.interface';
+import { User } from '../../users/entities/user.entity';
 
 export class OrganizeWebinar {
   constructor(

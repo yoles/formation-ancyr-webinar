@@ -1,9 +1,9 @@
 import { OrganizeWebinar } from './organize-webinar';
-import { FixedIdGenerator } from '../adapters/id-generator.stub';
+import { FixedIdGenerator } from '../../core/adapters/id-generator.stub';
 import { InMemoryWebinarRepository } from '../adapters/webinar-repository.in-memory';
 import { Webinar } from '../entities/webinar.entity';
-import { FixedDateGenerator } from '../adapters/date-generator.stub';
-import { User } from '../entities/user.entity';
+import { FixedDateGenerator } from '../../core/adapters/date-generator.stub';
+import { User } from '../../users/entities/user.entity';
 
 describe('Feature: organizing a webinar', () => {
   let idGenerator: FixedIdGenerator;

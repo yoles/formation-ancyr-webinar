@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  # app service for your backend
+  # core service for your backend
   app:
     container_name: backend
     build:

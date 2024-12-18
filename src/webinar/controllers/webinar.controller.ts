@@ -1,21 +1,14 @@
-import { Body, Controller, Request, Get, Post } from '@nestjs/common';
-import { AppService } from './app.service';
-import { OrganizeWebinar } from './usecases/organize-webinar';
-import { User } from './entities/user.entity';
-import { ZodValidationPipe } from './pipes/zod-validation.pipe';
-import { WebinarAPI } from './contract';
+import { Body, Controller, Request, Post } from '@nestjs/common';
+import { OrganizeWebinar } from '../usecases/organize-webinar';
+import { ZodValidationPipe } from '../../core/pipes/zod-validation.pipe';
+import { WebinarAPI } from '../contract';
+import { User } from '../../users/entities/user.entity';
 
 @Controller()
-export class AppController {
+export class WebinarController {
   constructor(
-    private readonly appService: AppService,
     private readonly organizeWebinar: OrganizeWebinar,
   ) {}
-
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
 
   @Post('/webinars')
   async handleOrganizeWebinar(
