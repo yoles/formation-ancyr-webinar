@@ -3,7 +3,8 @@ import { Webinar } from '../entities/webinar.entity';
 import { undefined } from 'zod';
 
 export class InMemoryWebinarRepository implements IWebinarRepository {
-  public database: Webinar[] = [];
+  constructor(public database: Webinar[] = []) {}
+
   async create(webinar: Webinar): Promise<void> {
     this.database.push(webinar);
   }
@@ -12,6 +13,22 @@ export class InMemoryWebinarRepository implements IWebinarRepository {
     const webinar = this.database.find(
       (w) => w.props.id === id
     );
-    return webinar ?? null;
+    return webinar ? new Webinar({...webinar.initialState}) : null;
   }
+
+  findByIdSync(id: string): Webinar | null  {
+    const webinar = this.database.find(
+      (w) => w.props.id === id
+    );
+    return webinar ? new Webinar({...webinar.initialState}) : null;
+  }
+
+  async update(webinar: Webinar): Promise<void> {
+    const index = this.database.findIndex(
+      (w) => w.props.id === webinar.props.id
+    );
+    this.database[index] = webinar;
+    webinar.commit()
+  }
+
 }

@@ -32,7 +32,7 @@ export class OrganizeWebinar {
       throw new Error('The webinar must happen 3 days from now');
     }
     if (webinar.hasTooManySeats()) {
-      throw new Error('The webinar must have a maximum of 1500 seats');
+      throw new Error('The webinar must have a maximum of 1000 seats');
     }
     if (webinar.hasNoSeats()) {
       throw new Error('The webinar must have a minimum of 1 seat');

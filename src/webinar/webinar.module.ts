@@ -6,6 +6,7 @@ import { WebinarController } from './controllers/webinar.controller';
 import { I_ID_GENERATOR } from '../core/ports/id-generator.interface';
 import { I_DATE_GENERATOR } from '../core/ports/date-generator.interface';
 import { CommonModule } from '../core/common.module';
+import { ChangeSeats } from './usecases/change-seats';
 
 @Module({
   imports: [CommonModule],
@@ -26,6 +27,13 @@ import { CommonModule } from '../core/common.module';
       ],
       useFactory: (repository, idGenerator, dateGenerator) => {
         return new OrganizeWebinar(repository, idGenerator, dateGenerator);
+      },
+    },
+    {
+      provide: ChangeSeats,
+      inject: [I_WEBINAR_REPOSITORY],
+      useFactory: (repository) => {
+        return new ChangeSeats(repository);
       },
     }
   ],

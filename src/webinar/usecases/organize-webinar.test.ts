@@ -91,7 +91,7 @@ describe('Feature: organizing a webinar', () => {
 
     it('Should throw an error', async () => {
       await expect(() => useCase.execute(payload)).rejects.toThrow(
-        'The webinar must have a maximum of 1500 seats',
+        'The webinar must have a maximum of 1000 seats',
       );
     });
 

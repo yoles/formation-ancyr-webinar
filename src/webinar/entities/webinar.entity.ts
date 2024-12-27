@@ -10,8 +10,14 @@ type WebinarProps = {
 };
 
 export class Webinar {
-  constructor(public props: WebinarProps) {
-    this.props = props;
+  public initialState: WebinarProps;
+  public props: WebinarProps;
+
+  constructor(data: WebinarProps) {
+    this.initialState = { ...data };
+    this.props = { ...data};
+
+    Object.freeze(this.initialState);
   }
 
   isTooClose(now: Date): boolean {
@@ -25,5 +31,13 @@ export class Webinar {
 
   hasNoSeats(): boolean {
     return this.props.seats < 1;
+  }
+
+  update(data: Partial<WebinarProps>): void {
+    this.props = {...this.props, ...data}
+  }
+
+  commit(): void {
+    this.initialState = this.props
   }
 }
