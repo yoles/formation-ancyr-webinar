@@ -1,11 +1,9 @@
+import { Entity } from '../../shared/entity';
+
 type UserProps = {
   id: string;
   emailAddress: string;
   password: string;
 };
 
-export class User {
-  constructor(public props: UserProps) {
-    this.props = props;
-  }
-}
+export class User extends Entity<UserProps> {}

@@ -1,5 +1,6 @@
 import { User } from '../../users/entities/user.entity';
 import { IWebinarRepository } from '../ports/webinar-repository.interface';
+import { Executable } from '../../shared/executable';
 
 type Request = {
   user: User,
@@ -9,7 +10,7 @@ type Request = {
 
 type Response = void;
 
-export class ChangeSeats {
+export class ChangeSeats implements Executable<Request, Response> {
   constructor(private webinarRepository: IWebinarRepository) {}
 
   async execute({user, webinarId, seats} : Request): Promise<Response> {

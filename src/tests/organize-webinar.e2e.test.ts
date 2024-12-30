@@ -1,7 +1,7 @@
 import * as request from 'supertest';
 import { addDays } from 'date-fns';
 import { TestApp } from './utils/test-app';
-import { e2eUsers } from './seeds/user.seeds';
+import { e2eUsers } from './seeds/user.seeds.e2e';
 import {
   I_WEBINAR_REPOSITORY,
   IWebinarRepository,
