@@ -63,7 +63,7 @@ describe('Feature: organizing a webinar', () => {
 
     it('Should throw an error', async () => {
       await expect(() => useCase.execute(payload)).rejects.toThrow(
-        'The webinar must happen 3 days from now',
+        "The webinar must happen at least 3 days from now",
       );
     });
 

@@ -36,7 +36,7 @@ export class OrganizeWebinar implements Executable<Request, Response> {
       endDate: data.endDate,
     });
     if (webinar.isTooClose(now)) {
-      throw new Error('The webinar must happen 3 days from now');
+      throw new Error("The webinar must happen at least 3 days from now");
     }
     if (webinar.hasTooManySeats()) {
       throw new Error('The webinar must have a maximum of 1000 seats');
