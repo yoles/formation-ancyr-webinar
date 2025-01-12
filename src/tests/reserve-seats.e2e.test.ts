@@ -2,18 +2,22 @@ import * as request from 'supertest';
 import { TestApp } from './utils/test-app';
 import { e2eUsers } from './seeds/user.seeds.e2e';
 import {
-  I_WEBINAR_REPOSITORY,
-  IWebinarRepository,
-} from '../webinar/ports/webinar-repository.interface';
+  I_PARTICIPATION_REPOSITORY,
+  IParticipationRepository,
+} from '../webinar/ports/participation-repository.interface';
 import { e2eWebinars } from './seeds/webinar.seeds.e2e';
 
-describe('Feature: organizing a webinar', () => {
+describe('Feature: Reserving a seat', () => {
   let app: TestApp;
 
   beforeEach(async () => {
     app = new TestApp();
     await app.setup();
-    await app.loadFixtures([e2eUsers.johnDoe, e2eWebinars.webinar1]);
+    await app.loadFixtures([
+      e2eUsers.johnDoe,
+      e2eUsers.bob,
+      e2eWebinars.webinar1,
+    ]);
   });
 
   afterEach(async () => {
@@ -21,50 +25,48 @@ describe('Feature: organizing a webinar', () => {
   });
 
   describe('Scenario: Happy Path', () => {
-    it('should update the number of seats for a webinar', async () => {
-      const seats = 100;
+    it('should succeed', async () => {
       const id = e2eWebinars.webinar1.entity.props.id;
 
       const result = await request(app.getHttpServer())
-        .post(`/webinars/${id}/seats`)
-        .set('Authorization', e2eUsers.johnDoe.createValidAuthorizationToken())
-        .send({ seats });
+        .post(`/webinars/${id}/participation`)
+        .set('Authorization', e2eUsers.bob.createValidAuthorizationToken());
 
-      expect(result.status).toEqual(200);
+      expect(result.status).toEqual(201);
 
-      const webinarRepository =
-        app.get<IWebinarRepository>(I_WEBINAR_REPOSITORY);
+      const participationRepository = app.get<IParticipationRepository>(
+        I_PARTICIPATION_REPOSITORY,
+      );
 
-      const webinar = await webinarRepository.findById(id);
-
-      expect(webinar).toBeDefined();
-      expect(webinar!.props.seats).toEqual(seats);
+      const participation = await participationRepository.findOne(
+        id,
+        e2eUsers.bob.entity.props.id,
+      );
+      expect(participation).toBeNull();
     });
   });
 
   describe('Scenario: The user is not authenticated', () => {
-    const seats = 100;
     const id = e2eWebinars.webinar1.entity.props.id;
 
     it('should reject the webinar update with anonymous user', async () => {
       const result = await request(app.getHttpServer())
-        .post(`/webinars/${id}/seats`)
-        .send({ seats });
+        .post(`/webinars/${id}/participation`)
+        .send();
 
       expect(result.status).toEqual(403);
     });
 
-    it("should reject the webinar update when it's wrong user", async () => {
-      const seats = 100;
+    it("should reject the cancel of a webinar when it's wrong user", async () => {
       const id = e2eWebinars.webinar1.entity.props.id;
 
       const result = await request(app.getHttpServer())
-        .post(`/webinars/${id}/seats`)
+        .post(`/webinars/${id}/participation`)
         .set(
           'Authorization',
           e2eUsers.johnDoe.createInvalidAuthorizationToken(),
         )
-        .send({ seats });
+        .send();
 
       expect(result.status).toEqual(403);
     });

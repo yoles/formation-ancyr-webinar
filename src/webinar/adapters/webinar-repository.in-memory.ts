@@ -10,25 +10,26 @@ export class InMemoryWebinarRepository implements IWebinarRepository {
   }
 
   async findById(id: string): Promise<Webinar | null> {
-    const webinar = this.database.find(
-      (w) => w.props.id === id
-    );
-    return webinar ? new Webinar({...webinar.initialState}) : null;
+    return this.findByIdSync(id);
   }
 
-  findByIdSync(id: string): Webinar | null  {
-    const webinar = this.database.find(
-      (w) => w.props.id === id
-    );
-    return webinar ? new Webinar({...webinar.initialState}) : null;
+  findByIdSync(id: string): Webinar | null {
+    const webinar = this.database.find((w) => w.props.id === id);
+    return webinar ? new Webinar({ ...webinar.initialState }) : null;
   }
 
   async update(webinar: Webinar): Promise<void> {
     const index = this.database.findIndex(
-      (w) => w.props.id === webinar.props.id
+      (w) => w.props.id === webinar.props.id,
     );
     this.database[index] = webinar;
-    webinar.commit()
+    webinar.commit();
   }
 
+  async delete(webinar: Webinar): Promise<void> {
+    const index = this.database.findIndex(
+      (w) => w.props.id === webinar.props.id,
+    );
+    this.database.splice(index, 1);
+  }
 }

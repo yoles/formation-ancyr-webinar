@@ -12,88 +12,95 @@ describe('Feature: change number of seats', () => {
   let webinarRepository: InMemoryWebinarRepository;
 
   function expectSeatsToRemainUnchanged() {
-    const webinar = webinarRepository.findByIdSync("1")
+    const webinar = webinarRepository.findByIdSync('1');
     expect(webinar!.props.seats).toEqual(50);
   }
 
   const webinar = new Webinar({
-    id: "1",
-    organizerId: "alice",
-    title: "My first webinar",
+    id: '1',
+    organizerId: 'alice',
+    title: 'My first webinar',
     seats: 50,
-    startDate: new Date("2023-01-10T10:00:00Z"),
-    endDate: new Date("2023-01-10T11:00:00Z")
+    startDate: new Date('2023-01-10T10:00:00Z'),
+    endDate: new Date('2023-01-10T11:00:00Z'),
   });
 
   beforeEach(async () => {
-    webinarRepository = new InMemoryWebinarRepository([webinar])
+    webinarRepository = new InMemoryWebinarRepository([webinar]);
     useCase = new ChangeSeats(webinarRepository);
   });
 
-  describe("Scenario: Happy Path", () => {
+  describe('Scenario: Happy Path', () => {
     const payload = {
       user: testUsers.alice,
-      webinarId: "1",
-      seats: 100
-    }
+      webinarId: '1',
+      seats: 100,
+    };
 
     it('should change the number of seats', async () => {
       await useCase.execute(payload);
 
-      const webinar = await webinarRepository.findById("1")
+      const webinar = await webinarRepository.findById('1');
       expect(webinar!.props.seats).toEqual(100);
     });
-  })
+  });
 
-  describe("Scenario: Webinar does not exist", () => {
+  describe('Scenario: Webinar does not exist', () => {
     const payload = {
       user: testUsers.alice,
       webinarId: '2',
-      seats: 200
-    }
+      seats: 200,
+    };
 
     it('should fail', async () => {
-      await expect(useCase.execute(payload)).rejects.toThrow("Webinar not found")
-      expectSeatsToRemainUnchanged()
+      await expect(useCase.execute(payload)).rejects.toThrow(
+        'Webinar not found',
+      );
+      expectSeatsToRemainUnchanged();
     });
-  })
+  });
 
-
-  describe("Scenario: Update webinar of someone else", () => {
+  describe('Scenario: Update webinar of someone else', () => {
     const payload = {
       user: testUsers.bob,
       webinarId: '1',
-      seats: 100
-    }
+      seats: 100,
+    };
 
     it('should fail', async () => {
-      await expect(useCase.execute(payload)).rejects.toThrow("You are not allowed to update this webinar")
-      expectSeatsToRemainUnchanged()
+      await expect(useCase.execute(payload)).rejects.toThrow(
+        'You are not allowed to update this webinar',
+      );
+      expectSeatsToRemainUnchanged();
     });
-  })
+  });
 
-  describe("Scenario: Reduce the number of seats of a webinar ", () => {
+  describe('Scenario: Reduce the number of seats of a webinar ', () => {
     const payload = {
       user: testUsers.alice,
       webinarId: '1',
-      seats: 49
-    }
+      seats: 49,
+    };
     it('should fail', async () => {
-      await expect(useCase.execute(payload)).rejects.toThrow("You cannot reduce the number of seats")
-      expectSeatsToRemainUnchanged()
+      await expect(useCase.execute(payload)).rejects.toThrow(
+        'You cannot reduce the number of seats',
+      );
+      expectSeatsToRemainUnchanged();
     });
-  })
+  });
 
-  describe("Scenario: Exceed the maximum amount of seats for a webinar ", () => {
+  describe('Scenario: Exceed the maximum amount of seats for a webinar ', () => {
     const payload = {
       user: testUsers.alice,
-        webinarId: '1',
-      seats: 1001
-    }
+      webinarId: '1',
+      seats: 1001,
+    };
 
     it('should fail', async () => {
-      await expect(useCase.execute(payload)).rejects.toThrow("The webinar must have a maximum of 1000 seats")
-      expectSeatsToRemainUnchanged()
+      await expect(useCase.execute(payload)).rejects.toThrow(
+        'The webinar must have a maximum of 1000 seats',
+      );
+      expectSeatsToRemainUnchanged();
     });
-  })
+  });
 });

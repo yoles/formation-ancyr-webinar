@@ -1,6 +1,6 @@
 import { differenceInDays } from 'date-fns';
 import { Entity } from '../../shared/entity';
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../../users/entities/user.entity';
 
 type WebinarProps = {
   organizerId: string;

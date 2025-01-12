@@ -3,7 +3,7 @@ import { IWebinarRepository } from '../ports/webinar-repository.interface';
 import { Executable } from '../../shared/executable';
 import { WebinarNotFoundException } from '../exceptions/webinar-not-found';
 import { WebinarUpdateForbidden } from '../exceptions/webinar-update-forbidden';
-import { DomainError } from 'src/shared/exception';
+import { DomainError } from '../../shared/exception';
 import { WebinarTooManySeatsException } from '../exceptions/webinar-too-many-seats';
 
 type Request = {

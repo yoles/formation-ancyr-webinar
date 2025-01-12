@@ -13,10 +13,13 @@ import { ChangeDates } from './usecases/change-dates';
 import { I_MAILER } from '../core/ports/mailer.interface';
 import { UserModule } from '../users/user.module';
 import { I_USER_REPOSITORY } from '../users/ports/user-repository.interface';
+import { CancelWebinar } from './usecases/cancel-webinar';
+import { ParticipationController } from './controllers/participation.controller';
+import { ReserveSeat } from './usecases/reserve-seat';
 
 @Module({
   imports: [CommonModule, UserModule],
-  controllers: [WebinarController],
+  controllers: [WebinarController, ParticipationController],
   providers: [
     {
       provide: I_WEBINAR_REPOSITORY,
@@ -65,6 +68,50 @@ import { I_USER_REPOSITORY } from '../users/ports/user-repository.interface';
           dateGenerator,
           participationRepository,
           mailer,
+          userRepository,
+        );
+      },
+    },
+    {
+      provide: CancelWebinar,
+      inject: [
+        I_WEBINAR_REPOSITORY,
+        I_MAILER,
+        I_PARTICIPATION_REPOSITORY,
+        I_USER_REPOSITORY,
+      ],
+      useFactory: (
+        repository,
+        mailer,
+        participationRepository,
+        userRepository,
+      ) => {
+        return new CancelWebinar(
+          repository,
+          mailer,
+          participationRepository,
+          userRepository,
+        );
+      },
+    },
+    {
+      provide: ReserveSeat,
+      inject: [
+        I_PARTICIPATION_REPOSITORY,
+        I_MAILER,
+        I_WEBINAR_REPOSITORY,
+        I_USER_REPOSITORY,
+      ],
+      useFactory: (
+        participationRepository,
+        mailer,
+        webinarRepository,
+        userRepository,
+      ) => {
+        return new ReserveSeat(
+          participationRepository,
+          mailer,
+          webinarRepository,
           userRepository,
         );
       },

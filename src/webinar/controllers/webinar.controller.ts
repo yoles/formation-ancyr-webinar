@@ -5,6 +5,7 @@ import {
   Post,
   Param,
   HttpCode,
+  Delete,
 } from '@nestjs/common';
 import { OrganizeWebinar } from '../usecases/organize-webinar';
 import { ZodValidationPipe } from '../../core/pipes/zod-validation.pipe';
@@ -12,6 +13,7 @@ import { WebinarAPI } from '../contract';
 import { User } from '../../users/entities/user.entity';
 import { ChangeSeats } from '../usecases/change-seats';
 import { ChangeDates } from '../usecases/change-dates';
+import { CancelWebinar } from '../usecases/cancel-webinar';
 
 @Controller()
 export class WebinarController {
@@ -19,6 +21,7 @@ export class WebinarController {
     private readonly organizeWebinar: OrganizeWebinar,
     private readonly changeSeats: ChangeSeats,
     private readonly changeDates: ChangeDates,
+    private readonly cancelWebinar: CancelWebinar,
   ) {}
 
   @Post('/webinars')
@@ -64,6 +67,18 @@ export class WebinarController {
       webinarId,
       startDate: body.startDate,
       endDate: body.endDate,
+    });
+  }
+
+  @Delete('/webinars/:id')
+  @HttpCode(200)
+  async handleCancelWebinar(
+    @Param('id') webinarId: string,
+    @Request() request: { user: User },
+  ): Promise<WebinarAPI.CancelWebinar.Response> {
+    return this.cancelWebinar.execute({
+      user: request.user,
+      webinarId,
     });
   }
 }

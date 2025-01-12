@@ -7,6 +7,8 @@ import { Participation } from '../entities/participation.entity';
 import { InMemoryParticipationRepository } from '../adapters/participation-repository.in-memory';
 import { EmailCounterMailer } from 'src/core/adapters/mailer.counter';
 import { InMemoryUserRepository } from 'src/users/adapters/user-repository.in-memory';
+import { WebinarNotFoundException } from '../exceptions/webinar-not-found';
+import { WebinarUpdateForbidden } from '../exceptions/webinar-update-forbidden';
 
 describe('Feature: changing the dates of a webinar', () => {
   function expectDatesToRemainUnchanged() {
@@ -91,7 +93,7 @@ describe('Feature: changing the dates of a webinar', () => {
 
     it('it should fail if the webinar is not found', async () => {
       await expect(() => useCase.execute(payload)).rejects.toThrow(
-        'Webinar not found',
+        WebinarNotFoundException,
       );
       expectDatesToRemainUnchanged();
     });
@@ -107,7 +109,7 @@ describe('Feature: changing the dates of a webinar', () => {
 
     it('it should fail if the webinar is own by someone else', async () => {
       await expect(() => useCase.execute(payload)).rejects.toThrow(
-        'You are not allowed to update this webinar',
+        WebinarUpdateForbidden,
       );
 
       const updatedWebinar = webinarRepository.findByIdSync('1')!;

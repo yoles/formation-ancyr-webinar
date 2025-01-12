@@ -7,6 +7,13 @@ export const e2eUsers = {
       id: '1',
       emailAddress: 'j.doe@example.fr',
       password: 'azerty',
-    })
-  )
-}
+    }),
+  ),
+  bob: new UserFixture(
+    new User({
+      id: 'bob',
+      emailAddress: 'bob@example.fr',
+      password: 'azerty',
+    }),
+  ),
+};
