@@ -29,6 +29,6 @@ import { UserModule } from '../users/user.module';
         return new AuthGuard(authenticator);
       },
     },
-  ]
+  ],
 })
 export class AppModule {}
