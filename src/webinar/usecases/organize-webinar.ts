@@ -4,6 +4,9 @@ import { Webinar } from '../entities/webinar.entity';
 import { IDateGenerator } from '../../core/ports/date-generator.interface';
 import { User } from '../../users/entities/user.entity';
 import { Executable } from '../../shared/executable';
+import { WebinarTooEarlyException } from '../exceptions/webinar-too-early';
+import { WebinarTooManySeatsException } from '../exceptions/webinar-too-many-seats';
+import { WebinarNotEnoughSeatsException } from '../exceptions/webinar-not-enough-seats';
 
 type Request = {
   user: User;
@@ -11,11 +14,11 @@ type Request = {
   seats: number;
   startDate: Date;
   endDate: Date;
-}
+};
 
 type Response = {
   id: string;
-}
+};
 
 export class OrganizeWebinar implements Executable<Request, Response> {
   constructor(
@@ -36,13 +39,13 @@ export class OrganizeWebinar implements Executable<Request, Response> {
       endDate: data.endDate,
     });
     if (webinar.isTooClose(now)) {
-      throw new Error("The webinar must happen at least 3 days from now");
+      throw new WebinarTooEarlyException();
     }
     if (webinar.hasTooManySeats()) {
-      throw new Error('The webinar must have a maximum of 1000 seats');
+      throw new WebinarTooManySeatsException();
     }
     if (webinar.hasNoSeats()) {
-      throw new Error('The webinar must have a minimum of 1 seat');
+      throw new WebinarNotEnoughSeatsException();
     }
     await this.repository.create(webinar);
     return { id };

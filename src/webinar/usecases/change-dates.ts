@@ -6,6 +6,9 @@ import { IParticipationRepository } from '../ports/participation-repository.inte
 import { IMailer } from 'src/core/ports/mailer.interface';
 import { IUserRepository } from 'src/users/ports/user-repository.interface';
 import { Webinar } from '../entities/webinar.entity';
+import { WebinarNotFoundException } from '../exceptions/webinar-not-found';
+import { WebinarUpdateForbidden } from '../exceptions/webinar-update-forbidden';
+import { WebinarTooEarlyException } from '../exceptions/webinar-too-early';
 
 type Request = {
   user: User;
@@ -28,11 +31,11 @@ export class ChangeDates implements Executable<Request, Response> {
   async execute(request: Request): Promise<Response> {
     const webinar = await this.webinarRepository.findById(request.webinarId);
     if (webinar === null) {
-      throw new Error('Webinar not found');
+      throw new WebinarNotFoundException();
     }
 
-    if (webinar.props.organizerId !== request.user.props.id) {
-      throw new Error('You are not allowed to update this webinar');
+    if (!webinar.isOrganizer(request.user)) {
+      throw new WebinarUpdateForbidden();
     }
 
     webinar.update({
@@ -41,7 +44,7 @@ export class ChangeDates implements Executable<Request, Response> {
     });
 
     if (webinar.isTooClose(this.dateGenerator.now())) {
-      throw new Error('The webinar must happen at least 3 days from now');
+      throw new WebinarTooEarlyException();
     }
 
     await this.webinarRepository.update(webinar);
@@ -49,7 +52,7 @@ export class ChangeDates implements Executable<Request, Response> {
     return;
   }
 
-  async sendEmailToParticipants(webinar: Webinar) {
+  private async sendEmailToParticipants(webinar: Webinar) {
     const participations = await this.participationRepository.findByWebinarId(
       webinar.props.id,
     );
