@@ -2,27 +2,39 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../../core/app.module';
 import { IFixture } from './fixture';
+import { ConfigModule } from '@nestjs/config';
 
 export class TestApp {
   private app: INestApplication;
 
-  async setup(){
+  async setup() {
     const module = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [
+        AppModule,
+        ConfigModule.forRoot({
+          ignoreEnvFile: true,
+          ignoreEnvVars: true,
+          isGlobal: true,
+          load: [
+            () => ({
+              DATABASE_URL:
+                'mongodb://admin:azerty@localhost:3701/webinaires?authSource=admin&directConnection=true',
+            }),
+          ],
+        }),
+      ],
     }).compile();
 
     this.app = module.createNestApplication();
     await this.app.init();
   }
 
-  async cleanup(){
+  async cleanup() {
     await this.app.close();
   }
 
   async loadFixtures(fixtures: IFixture[]) {
-    return Promise.all(
-      fixtures.map((fixture) => fixture.load(this))
-    )
+    return Promise.all(fixtures.map((fixture) => fixture.load(this)));
   }
 
   get<T>(name: any) {

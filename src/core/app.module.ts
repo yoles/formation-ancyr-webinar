@@ -9,9 +9,23 @@ import { I_USER_REPOSITORY } from '../users/ports/user-repository.interface';
 import { WebinarModule } from '../webinar/webinar.module';
 import { CommonModule } from './common.module';
 import { UserModule } from '../users/user.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
-  imports: [CommonModule, WebinarModule, UserModule],
+  imports: [
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        uri: configService.get('DATABASE_URL'),
+      }),
+    }),
+    CommonModule,
+    WebinarModule,
+    UserModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,
