@@ -3,6 +3,9 @@ import { Test } from '@nestjs/testing';
 import { AppModule } from '../../core/app.module';
 import { IFixture } from './fixture';
 import { ConfigModule } from '@nestjs/config';
+import { getModelToken } from '@nestjs/mongoose';
+import { MongoUser } from '../../users/adapters/mongo/mongo.user';
+import { model, Model } from 'mongoose';
 
 export class TestApp {
   private app: INestApplication;
@@ -27,6 +30,7 @@ export class TestApp {
 
     this.app = module.createNestApplication();
     await this.app.init();
+    await this.clearDatabase();
   }
 
   async cleanup() {
@@ -43,5 +47,12 @@ export class TestApp {
 
   getHttpServer() {
     return this.app.getHttpServer();
+  }
+
+  private async clearDatabase() {
+    const model = this.app.get<Model<MongoUser.SchemaClass>>(
+      getModelToken(MongoUser.CollectionName),
+    );
+    await model.deleteMany({});
   }
 }
