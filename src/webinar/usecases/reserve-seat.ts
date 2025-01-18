@@ -7,6 +7,8 @@ import { IMailer } from '../../core/ports/mailer.interface';
 import { IUserRepository } from '../../users/ports/user-repository.interface';
 import { Webinar } from '../entities/webinar.entity';
 import { WebinarNotFoundException } from '../exceptions/webinar-not-found';
+import { NoMoreSeatsAvailableException } from '../exceptions/no-more-seats-available';
+import { SeatAlreadyReservedException } from '../exceptions/seat-already-reserved';
 
 type Request = {
   user: User;
@@ -53,7 +55,7 @@ export class ReserveSeat implements Executable<Request, Response> {
       webinarId,
     );
     if (existingParticipation) {
-      throw new Error('You already participate in this webinar');
+      throw new SeatAlreadyReservedException();
     }
   }
 
@@ -61,7 +63,7 @@ export class ReserveSeat implements Executable<Request, Response> {
     const participationCount =
       await this.participationRepository.getParticipantsCount(webinar.props.id);
     if (participationCount >= webinar.props.seats) {
-      throw new Error('There is not enough seats for this webinar');
+      throw new NoMoreSeatsAvailableException();
     }
   }
 

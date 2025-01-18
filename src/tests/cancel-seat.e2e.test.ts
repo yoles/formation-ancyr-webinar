@@ -6,8 +6,10 @@ import {
   IParticipationRepository,
 } from '../webinar/ports/participation-repository.interface';
 import { e2eWebinars } from './seeds/webinar.seeds.e2e';
+import { Participation } from '../webinar/entities/participation.entity';
+import { ParticipationFixture } from './fixtures/participation.fixture';
 
-describe('Feature: Reserving a seat', () => {
+describe('Feature: Cancelling a seat', () => {
   let app: TestApp;
 
   beforeEach(async () => {
@@ -17,6 +19,12 @@ describe('Feature: Reserving a seat', () => {
       e2eUsers.johnDoe,
       e2eUsers.bob,
       e2eWebinars.webinar1,
+      new ParticipationFixture(
+        new Participation({
+          userId: e2eUsers.bob.entity.props.id,
+          webinarId: e2eWebinars.webinar1.entity.props.id,
+        }),
+      ),
     ]);
   });
 
@@ -29,10 +37,10 @@ describe('Feature: Reserving a seat', () => {
       const id = e2eWebinars.webinar1.entity.props.id;
 
       const result = await request(app.getHttpServer())
-        .post(`/webinars/${id}/participation`)
+        .delete(`/webinars/${id}/participation`)
         .set('Authorization', e2eUsers.bob.createValidAuthorizationToken());
 
-      expect(result.status).toEqual(201);
+      expect(result.status).toEqual(200);
 
       const participationRepository = app.get<IParticipationRepository>(
         I_PARTICIPATION_REPOSITORY,
@@ -42,7 +50,7 @@ describe('Feature: Reserving a seat', () => {
         e2eUsers.bob.entity.props.id,
         id,
       );
-      expect(participation).not.toBeNull();
+      expect(participation).toBeNull();
     });
   });
 
@@ -51,7 +59,7 @@ describe('Feature: Reserving a seat', () => {
 
     it('should reject the webinar update with anonymous user', async () => {
       const result = await request(app.getHttpServer())
-        .post(`/webinars/${id}/participation`)
+        .delete(`/webinars/${id}/participation`)
         .send();
 
       expect(result.status).toEqual(403);
@@ -61,7 +69,7 @@ describe('Feature: Reserving a seat', () => {
       const id = e2eWebinars.webinar1.entity.props.id;
 
       const result = await request(app.getHttpServer())
-        .post(`/webinars/${id}/participation`)
+        .delete(`/webinars/${id}/participation`)
         .set(
           'Authorization',
           e2eUsers.johnDoe.createInvalidAuthorizationToken(),

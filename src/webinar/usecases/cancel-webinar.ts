@@ -1,10 +1,9 @@
-import { Executable } from 'src/shared/executable';
-import { User } from 'src/users/entities/user.entity';
+import { Executable } from '../../shared/executable';
+import { User } from '../../users/entities/user.entity';
 import { IWebinarRepository } from '../ports/webinar-repository.interface';
 import { WebinarNotFoundException } from '../exceptions/webinar-not-found';
 import { WebinarUpdateForbidden } from '../exceptions/webinar-update-forbidden';
 import { IMailer } from 'src/core/ports/mailer.interface';
-import { testUsers } from 'src/users/tests/user.seeds';
 import { IParticipationRepository } from '../ports/participation-repository.interface';
 import { IUserRepository } from 'src/users/ports/user-repository.interface';
 import { Webinar } from '../entities/webinar.entity';

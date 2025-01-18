@@ -131,7 +131,7 @@ describe('Feature: reserving a seat', () => {
 
     it('should throw an error', async () => {
       await expect(useCase.execute(payload)).rejects.toThrow(
-        'There is not enough seats for this webinar',
+        'No more seats available',
       );
       expectParticipationNotToBeCreated();
     });

@@ -16,6 +16,7 @@ import { I_USER_REPOSITORY } from '../users/ports/user-repository.interface';
 import { CancelWebinar } from './usecases/cancel-webinar';
 import { ParticipationController } from './controllers/participation.controller';
 import { ReserveSeat } from './usecases/reserve-seat';
+import { CancelSeat } from './usecases/cancel-seat';
 
 @Module({
   imports: [CommonModule, UserModule],
@@ -113,6 +114,28 @@ import { ReserveSeat } from './usecases/reserve-seat';
           mailer,
           webinarRepository,
           userRepository,
+        );
+      },
+    },
+    {
+      provide: CancelSeat,
+      inject: [
+        I_WEBINAR_REPOSITORY,
+        I_PARTICIPATION_REPOSITORY,
+        I_USER_REPOSITORY,
+        I_MAILER,
+      ],
+      useFactory: (
+        webinarRepository,
+        participationRepository,
+        userRepository,
+        mailer,
+      ) => {
+        return new CancelSeat(
+          webinarRepository,
+          participationRepository,
+          userRepository,
+          mailer,
         );
       },
     },
