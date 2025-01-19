@@ -7,6 +7,7 @@ import { getModelToken } from '@nestjs/mongoose';
 import { MongoUser } from '../../users/adapters/mongo/mongo-user';
 import { Model } from 'mongoose';
 import { MongoWebinar } from '../../webinar/adapters/mongo/mongo-webinar';
+import { MongoParticipation } from '../../webinar/adapters/mongo/mongo-participation';
 
 export class TestApp {
   private app: INestApplication;
@@ -57,7 +58,12 @@ export class TestApp {
     const webinarModel = this.app.get<Model<MongoWebinar.SchemaClass>>(
       getModelToken(MongoWebinar.CollectionName),
     );
+    const participationModel = this.app.get<
+      Model<MongoParticipation.SchemaClass>
+    >(getModelToken(MongoParticipation.CollectionName));
+
     await userModel.deleteMany({});
     await webinarModel.deleteMany({});
+    await participationModel.deleteMany({});
   }
 }
