@@ -4,8 +4,9 @@ import { AppModule } from '../../core/app.module';
 import { IFixture } from './fixture';
 import { ConfigModule } from '@nestjs/config';
 import { getModelToken } from '@nestjs/mongoose';
-import { MongoUser } from '../../users/adapters/mongo/mongo.user';
-import { model, Model } from 'mongoose';
+import { MongoUser } from '../../users/adapters/mongo/mongo-user';
+import { Model } from 'mongoose';
+import { MongoWebinar } from '../../webinar/adapters/mongo/mongo-webinar';
 
 export class TestApp {
   private app: INestApplication;
@@ -50,9 +51,13 @@ export class TestApp {
   }
 
   private async clearDatabase() {
-    const model = this.app.get<Model<MongoUser.SchemaClass>>(
+    const userModel = this.app.get<Model<MongoUser.SchemaClass>>(
       getModelToken(MongoUser.CollectionName),
     );
-    await model.deleteMany({});
+    const webinarModel = this.app.get<Model<MongoWebinar.SchemaClass>>(
+      getModelToken(MongoWebinar.CollectionName),
+    );
+    await userModel.deleteMany({});
+    await webinarModel.deleteMany({});
   }
 }

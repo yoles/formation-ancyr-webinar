@@ -6,16 +6,20 @@ export abstract class Entity<TType> {
 
   constructor(data: TType) {
     this.initialState = { ...data };
-    this.props = { ...data};
+    this.props = { ...data };
 
     Object.freeze(this.initialState);
   }
 
   update(data: Partial<TType>): void {
-    this.props = {...this.props, ...data}
+    this.props = { ...this.props, ...data };
   }
 
   commit(): void {
-    this.initialState = this.props
+    this.initialState = this.props;
+  }
+
+  clone(): Entity<TType> {
+    return new (this.constructor as any)(this.props);
   }
 }

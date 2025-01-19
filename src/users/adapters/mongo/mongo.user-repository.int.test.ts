@@ -1,6 +1,6 @@
 import { TestApp } from '../../../tests/utils/test-app';
 import { MongoUserRepository } from './mongo.user-repository';
-import { MongoUser } from './mongo.user';
+import { MongoUser } from './mongo-user';
 import { Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { testUsers } from '../../../users/tests/user.seeds';

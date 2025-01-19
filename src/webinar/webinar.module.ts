@@ -17,15 +17,28 @@ import { CancelWebinar } from './usecases/cancel-webinar';
 import { ParticipationController } from './controllers/participation.controller';
 import { ReserveSeat } from './usecases/reserve-seat';
 import { CancelSeat } from './usecases/cancel-seat';
+import { getModelToken, MongooseModule } from '@nestjs/mongoose';
+import { MongoWebinar } from './adapters/mongo/mongo-webinar';
+import { MongoWebinarRepository } from './adapters/mongo/mongo-webinar.repository';
 
 @Module({
-  imports: [CommonModule, UserModule],
+  imports: [
+    CommonModule,
+    UserModule,
+    MongooseModule.forFeature([
+      {
+        name: MongoWebinar.CollectionName,
+        schema: MongoWebinar.Schema,
+      },
+    ]),
+  ],
   controllers: [WebinarController, ParticipationController],
   providers: [
     {
       provide: I_WEBINAR_REPOSITORY,
-      useFactory: () => {
-        return new InMemoryWebinarRepository();
+      inject: [getModelToken(MongoWebinar.CollectionName)],
+      useFactory: (model) => {
+        return new MongoWebinarRepository(model);
       },
     },
     {
