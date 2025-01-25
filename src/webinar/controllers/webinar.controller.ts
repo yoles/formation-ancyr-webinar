@@ -6,6 +6,8 @@ import {
   Param,
   HttpCode,
   Delete,
+  Get,
+  Inject,
 } from '@nestjs/common';
 import { OrganizeWebinar } from '../usecases/organize-webinar';
 import { ZodValidationPipe } from '../../core/pipes/zod-validation.pipe';
@@ -14,6 +16,10 @@ import { User } from '../../users/entities/user.entity';
 import { ChangeSeats } from '../usecases/change-seats';
 import { ChangeDates } from '../usecases/change-dates';
 import { CancelWebinar } from '../usecases/cancel-webinar';
+import {
+  GetWebinarByIdQuery,
+  I_GET_WEBINAR_BY_ID_QUERY,
+} from '../ports/get-webinar-by-id-query.interface';
 
 @Controller()
 export class WebinarController {
@@ -22,6 +28,9 @@ export class WebinarController {
     private readonly changeSeats: ChangeSeats,
     private readonly changeDates: ChangeDates,
     private readonly cancelWebinar: CancelWebinar,
+    // The usecase is not necessary here
+    @Inject(I_GET_WEBINAR_BY_ID_QUERY)
+    private readonly getWebinarById: GetWebinarByIdQuery,
   ) {}
 
   @Post('/webinars')
@@ -80,5 +89,12 @@ export class WebinarController {
       user: request.user,
       webinarId,
     });
+  }
+
+  @Get('/webinars/:id')
+  async handleGetWebinarById(
+    @Param('id') webinarId: string,
+  ): Promise<WebinarAPI.GetWebinarById.Response> {
+    return this.getWebinarById.execute(webinarId);
   }
 }

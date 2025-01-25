@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { InMemoryUserRepository } from './adapters/user-repository.in-memory';
 import { I_USER_REPOSITORY } from './ports/user-repository.interface';
 import { MongoUser } from './adapters/mongo/mongo-user';
 import { getModelToken, MongooseModule } from '@nestjs/mongoose';
@@ -22,6 +21,6 @@ import { Model } from 'mongoose';
       },
     },
   ],
-  exports: [I_USER_REPOSITORY],
+  exports: [I_USER_REPOSITORY, MongooseModule],
 })
 export class UserModule {}

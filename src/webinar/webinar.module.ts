@@ -7,7 +7,6 @@ import { I_DATE_GENERATOR } from '../core/ports/date-generator.interface';
 import { CommonModule } from '../core/common.module';
 import { ChangeSeats } from './usecases/change-seats';
 import { I_PARTICIPATION_REPOSITORY } from './ports/participation-repository.interface';
-import { InMemoryParticipationRepository } from './adapters/participation-repository.in-memory';
 import { ChangeDates } from './usecases/change-dates';
 import { I_MAILER } from '../core/ports/mailer.interface';
 import { UserModule } from '../users/user.module';
@@ -21,6 +20,10 @@ import { MongoWebinar } from './adapters/mongo/mongo-webinar';
 import { MongoWebinarRepository } from './adapters/mongo/mongo-webinar.repository';
 import { MongoParticipation } from './adapters/mongo/mongo-participation';
 import { MongoParticipationRepository } from './adapters/mongo/mongo-participation.repository';
+import { MongoUser } from '../users/adapters/mongo/mongo-user';
+import { I_GET_WEBINAR_BY_ID_QUERY } from './ports/get-webinar-by-id-query.interface';
+import { MongoGetWebinarById } from './adapters/mongo/mongo-get-webinar-by-id-query';
+import { GetWebinarByIdUseCase } from './usecases/get-webinar-by-id-cqrs';
 
 @Module({
   imports: [
@@ -51,6 +54,21 @@ import { MongoParticipationRepository } from './adapters/mongo/mongo-participati
       inject: [getModelToken(MongoParticipation.CollectionName)],
       useFactory: (model) => {
         return new MongoParticipationRepository(model);
+      },
+    },
+    {
+      provide: I_GET_WEBINAR_BY_ID_QUERY,
+      inject: [
+        getModelToken(MongoWebinar.CollectionName),
+        getModelToken(MongoParticipation.CollectionName),
+        getModelToken(MongoUser.CollectionName),
+      ],
+      useFactory: (webinarModel, participationModel, userModel) => {
+        return new MongoGetWebinarById(
+          webinarModel,
+          participationModel,
+          userModel,
+        );
       },
     },
     {
@@ -156,6 +174,14 @@ import { MongoParticipationRepository } from './adapters/mongo/mongo-participati
           userRepository,
           mailer,
         );
+      },
+    },
+    // Not necessary because the usecase is overkil
+    {
+      provide: GetWebinarByIdUseCase,
+      inject: [I_GET_WEBINAR_BY_ID_QUERY],
+      useFactory: (query) => {
+        return new GetWebinarByIdUseCase(query);
       },
     },
   ],
